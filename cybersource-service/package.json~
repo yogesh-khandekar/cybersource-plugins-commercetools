@@ -27,8 +27,8 @@
     "zip-function": "npm run build && run-func ./build/main/zipFile.js setupZipFile"
   },
   "engines": {
-    "node": "=20.8.0",
-    "npm": "=10.9.1"
+    "node": ">=10",
+    "npm": ">=10.9.1"
   },
   "files": [
     "build/main",
