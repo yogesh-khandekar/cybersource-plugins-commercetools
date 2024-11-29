@@ -68,6 +68,7 @@
     ]
   },
   "dependencies": {
+    "@commercetools-backend/loggers": "^22.35.0",
     "@commercetools/api-request-builder": "^6.0.0",
     "@commercetools/sdk-auth": "^4.0.1",
     "@commercetools/sdk-client": "^3.0.0",

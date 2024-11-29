@@ -20,6 +20,7 @@ import paymentUtils from './utils/PaymentUtils';
 import paymentValidator from './utils/PaymentValidator'
 import commercetoolsApi from './utils/api/CommercetoolsApi';
 import resourceHandler from './utils/config/ResourceHandler';
+import { logger } from './utils/logger.utils';
 
 let errorMessage = '';
 let successMessage = '';
@@ -39,15 +40,17 @@ const app = new AppHandler(middlewareFunctions);
 const route = new RouterHandler();
 app.listen(port, (err: any) => {
   if (err) {
+    logger.info(`⚡️ Error in starting the extension :`);
     console.log('Error in starting the extension :', err);
   } else {
+    logger.info(`⚡️ Extension started in port ${port}`);
     console.log(`Extension started in port ${port}`);
   }
 });
 
 /**
  * Authentication function for handling incoming HTTP requests.
- * 
+ *
  * @param {http.IncomingMessage} req - The incoming HTTP request object.
  * @param {http.ServerResponse} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -135,7 +138,7 @@ async function authentication(req: http.IncomingMessage, res: http.ServerRespons
 
 /**
  * Handles incoming HTTP requests based on their method and URL path.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -236,7 +239,7 @@ const handleRequest = async (req: any, res: any): Promise<void> => {
 
 /**
  * handles payment details view.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -253,7 +256,7 @@ const handlePaymentDetails = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Retrieves and handles payment data.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -307,7 +310,7 @@ const handlePaymentsData = async (req: any, res: any): Promise<void> => {
 
 /**
  *  handles orders view.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -324,7 +327,7 @@ const handleOrders = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Retrieves and handles orders data.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -361,7 +364,7 @@ const handleOrdersData = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment create endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -389,7 +392,7 @@ const handlePaymentCreate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment update endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -414,7 +417,7 @@ const handlePaymentUpdate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment create endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -446,7 +449,7 @@ const handleCustomerUpdate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the authorization reversal endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -482,7 +485,7 @@ const handleAuthReversal = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the capture endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -520,7 +523,7 @@ const handleCapture = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the refund endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -558,7 +561,7 @@ const handleRefund = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles network tokenization post endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -589,7 +592,7 @@ const handlePostNetTokenNotification = async (req: any, res: any): Promise<void>
 
 /**
  * Handles the decision synchronization endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -605,7 +608,7 @@ const handleDecisionSync = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the runsync endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -621,7 +624,7 @@ const handleSync = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the configuration of extensions endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
