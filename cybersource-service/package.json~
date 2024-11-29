@@ -11,7 +11,7 @@
     "clean": "npx rimraf --glob build:*",
     "format": "npx prettier --write .",
     "tsc": "tsc",
-    "start": "node build/main/index.js",
+    "start": "npm run build && node build/main/index.js",
     "deploy": "npm run build && serverless deploy",
     "build": "npx npm-run-all clean && npx run-p build:* && npx copyfiles -u 1 src/**/*.html src/**/*.css src/**/*.js src/**/*.png build/main",
     "setup-resources": "npm run build && run-func ./build/main/setup.js setupExtensionResources",
