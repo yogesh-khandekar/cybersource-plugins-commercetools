@@ -2,6 +2,7 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import url from 'url';
+import { logger } from './utils/logger.utils';
 
 import dotenv from 'dotenv';
 import { JSDOM } from 'jsdom';
@@ -26,6 +27,10 @@ let successMessage = '';
 let orderSuccessMessage = '';
 let orderErrorMessage = '';
 let port: number;
+const PORT = 8080;
+
+logger.info('In index.js')
+
 dotenv.config();
 
 if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
@@ -37,17 +42,25 @@ if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
 const middlewareFunctions = [authentication];
 const app = new AppHandler(middlewareFunctions);
 const route = new RouterHandler();
-app.listen(port, (err: any) => {
-  if (err) {
-    console.log('Error in starting the extension :', err);
-  } else {
-    console.log(`Extension started in port ${port}`);
-  }
+
+// Listen the application
+app.listen(PORT, () => {
+  logger.info(`⚡️ CYbersource extension application listening on port ${PORT}`);
 });
+
+// app.listen(port, (err: any) => {
+//   if (err) {
+//     logger.info('Error in starting the extension');
+//     console.log('Error in starting the extension :', err);
+//   } else {
+//     logger.info(`Extension started in port ${port}`);
+//     console.log(`Extension started in port ${port}`);
+//   }
+// });
 
 /**
  * Authentication function for handling incoming HTTP requests.
- * 
+ *
  * @param {http.IncomingMessage} req - The incoming HTTP request object.
  * @param {http.ServerResponse} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -111,9 +124,9 @@ async function authentication(req: http.IncomingMessage, res: http.ServerRespons
       const pathName = parsedUrl?.pathname;
       if (pathName && Constants.EXTENSION_SERVICE_END_POINTS.includes(pathName)) {
         res.setHeader('WWW-Authenticate', Constants.AUTHENTICATION_SCHEME);
-        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
+        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: "1"+CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
       } else {
-        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
+        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: "2"+CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
       }
     } else {
       const pathName = parsedUrl?.pathname;
@@ -124,10 +137,13 @@ async function authentication(req: http.IncomingMessage, res: http.ServerRespons
           : route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: CustomMessages.ERROR_MSG_INVALID_AUTHENTICATION_CREDENTIALS }));
       } else if (Constants.PAYMENT_CREATE_DESTINATION_URL === requestUrl || Constants.PAYMENT_UPDATE_DESTINATION_URL === requestUrl || Constants.CUSTOMER_UPDATE_DESTINATION_URL === requestUrl || '/captureContext' === requestUrl) {
         const encodedCredentials = authHeader.split(' ')[1];
+        console.log("authHeader"+authHeader);
+        console.log("endode"+encodedCredentials);
         const decrypt = paymentUtils.decryption(encodedCredentials);
-        decrypt && decrypt === process.env.PAYMENT_GATEWAY_EXTENSION_HEADER_VALUE ? handleRequest(req, res) : route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
+        console.log("decrypt"+decrypt);
+        decrypt && decrypt === process.env.PAYMENT_GATEWAY_EXTENSION_HEADER_VALUE ? handleRequest(req, res) : route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: "3"+CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
       } else {
-        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
+        route.sendResponse(res, Constants.HTTP_UNAUTHORIZED_STATUS_CODE, 'application/json', JSON.stringify({ message: "4"+CustomMessages.ERROR_MSG_MISSING_AUTHORIZATION_HEADER }));
       }
     }
   }
@@ -135,7 +151,7 @@ async function authentication(req: http.IncomingMessage, res: http.ServerRespons
 
 /**
  * Handles incoming HTTP requests based on their method and URL path.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -236,7 +252,7 @@ const handleRequest = async (req: any, res: any): Promise<void> => {
 
 /**
  * handles payment details view.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -253,7 +269,7 @@ const handlePaymentDetails = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Retrieves and handles payment data.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -307,7 +323,7 @@ const handlePaymentsData = async (req: any, res: any): Promise<void> => {
 
 /**
  *  handles orders view.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -324,7 +340,7 @@ const handleOrders = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Retrieves and handles orders data.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -361,12 +377,13 @@ const handleOrdersData = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment create endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
  */
 const handlePaymentCreate = async (req: any, res: any): Promise<void> => {
+  console.log("x");
   let response;
   try {
     const body = await paymentUtils.collectRequestData(req);
@@ -389,7 +406,7 @@ const handlePaymentCreate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment update endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -414,7 +431,7 @@ const handlePaymentUpdate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the payment create endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -446,7 +463,7 @@ const handleCustomerUpdate = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the authorization reversal endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -482,7 +499,7 @@ const handleAuthReversal = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the capture endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -520,7 +537,7 @@ const handleCapture = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles the refund endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -558,7 +575,7 @@ const handleRefund = async (req: any, res: any): Promise<void> => {
 
 /**
  * Handles network tokenization post endpoint.
- * 
+ *
  * @param {any} req - The incoming HTTP request object.
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -589,7 +606,7 @@ const handlePostNetTokenNotification = async (req: any, res: any): Promise<void>
 
 /**
  * Handles the decision synchronization endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -605,7 +622,7 @@ const handleDecisionSync = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the runsync endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
@@ -621,7 +638,7 @@ const handleSync = async (_req: any, res: any): Promise<void> => {
 
 /**
  * Handles the configuration of extensions endpoint.
- * 
+ *
  * @param {any} _req - The incoming HTTP request object (not used).
  * @param {any} res - The server response object.
  * @returns {Promise<void>} - A promise resolving to void.
