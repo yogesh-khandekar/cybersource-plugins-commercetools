@@ -26,18 +26,18 @@ let errorMessage = '';
 let successMessage = '';
 let orderSuccessMessage = '';
 let orderErrorMessage = '';
-let port: number;
+//let port: number;
 const PORT = 8080;
 
-logger.info('In index.js')
+//logger.info('In index.js')
 
 dotenv.config();
 
-if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
-  port = Number(process.env.FUNCTIONS_HTTPWORKER_PORT);
-} else {
-  port = Number(process.env.CONFIG_PORT);
-}
+// if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
+//   port = Number(process.env.FUNCTIONS_HTTPWORKER_PORT);
+// } else {
+//   port = Number(process.env.CONFIG_PORT);
+// }
 
 const middlewareFunctions = [authentication];
 const app = new AppHandler(middlewareFunctions);
