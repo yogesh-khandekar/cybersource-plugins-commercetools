@@ -26,37 +26,32 @@ let errorMessage = '';
 let successMessage = '';
 let orderSuccessMessage = '';
 let orderErrorMessage = '';
-//let port: number;
-const PORT = 8080;
+let port: number;
+//const PORT = 8080;
 
-//logger.info('In index.js')
+logger.info('In index.js')
 
 dotenv.config();
 
-// if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
-//   port = Number(process.env.FUNCTIONS_HTTPWORKER_PORT);
-// } else {
-//   port = Number(process.env.CONFIG_PORT);
-// }
+if ('azure' === process.env.PAYMENT_GATEWAY_SERVERLESS_DEPLOYMENT) {
+  port = Number(process.env.FUNCTIONS_HTTPWORKER_PORT);
+} else {
+  port = Number(process.env.CONFIG_PORT);
+}
 
 const middlewareFunctions = [authentication];
 const app = new AppHandler(middlewareFunctions);
 const route = new RouterHandler();
 
-// Listen the application
-app.listen(PORT, () => {
-  logger.info(`⚡️ CYbersource extension application listening on port ${PORT}`);
+app.listen(port, (err: any) => {
+  if (err) {
+    logger.info('Logger: Error in starting the extension');
+    console.log('Error in starting the extension :', err);
+  } else {
+    logger.info(`Logger: Extension started in port ${port}`);
+    console.log(`Extension started in port ${port}`);
+  }
 });
-
-// app.listen(port, (err: any) => {
-//   if (err) {
-//     logger.info('Error in starting the extension');
-//     console.log('Error in starting the extension :', err);
-//   } else {
-//     logger.info(`Extension started in port ${port}`);
-//     console.log(`Extension started in port ${port}`);
-//   }
-// });
 
 /**
  * Authentication function for handling incoming HTTP requests.
