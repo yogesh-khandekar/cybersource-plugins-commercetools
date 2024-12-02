@@ -43,8 +43,8 @@ app.listen(port, (err: any) => {
     logger.info(`⚡️ Error in starting the extension :`);
     console.log('Error in starting the extension :', err);
   } else {
-    logger.info(`⚡️ Extension started in port ${port}`);
-    console.log(`Extension started in port ${port}`);
+    logger.info(`⚡️ 1Extension started in port ${port}`);
+    console.log(`1Extension started in port ${port}`);
   }
 });
 

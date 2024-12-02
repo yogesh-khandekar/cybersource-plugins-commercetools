@@ -10,6 +10,7 @@ import commercetoolsApi from './utils/api/CommercetoolsApi';
 import MultiMid from './utils/config/MultiMid';
 import resourceHandler from './utils/config/ResourceHandler';
 import webhookHelper from './utils/helpers/WebhookHelper';
+import { logger } from './utils/logger.utils';
 
 dotenv.config();
 /**
@@ -17,6 +18,9 @@ dotenv.config();
  * @returns {Promise<boolean>} A promise that resolves to true if the extension resources are successfully set up, otherwise false.
  */
 const setupExtensionResources = async (): Promise<boolean> => {
+
+  logger.info(`⚡️ Inside setupExtensionResources`+process.env.PAYMENT_GATEWAY_EXTENSION_DESTINATION_URL);
+
   let isExtensionSetupComplete = false;
   try {
     if (process.env.PAYMENT_GATEWAY_EXTENSION_DESTINATION_URL && process.env.PAYMENT_GATEWAY_EXTENSION_HEADER_VALUE && process.env.CT_PROJECT_KEY && process.env.CT_CLIENT_ID && process.env.CT_CLIENT_SECRET && process.env.CT_AUTH_HOST && process.env.CT_API_HOST) {
