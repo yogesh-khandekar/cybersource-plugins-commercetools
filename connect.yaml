@@ -3,7 +3,8 @@ deployAs:
     applicationType: service
     endpoint: /cybersource-service
     scripts:
-      postDeploy: npm install && npm run setup-resources
+      preDeploy: npm install && npm run build
+      postDeploy: npm start
     configuration:
       standardConfiguration:
         - key: CONFIG_PORT
